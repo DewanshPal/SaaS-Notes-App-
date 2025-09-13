@@ -1,36 +1,33 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# SaaS Notes Application
 
-## Getting Started
+A multi-tenant SaaS Notes Application with strict data isolation using the shared schema with tenant ID approach.
 
-First, run the development server:
+## Multi-Tenant Architecture: Shared Schema with Tenant ID Approach
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+### Overview
+This application uses a **shared schema with tenant ID** approach for multi-tenancy. All tenants share the same database and schema, but data isolation is enforced through a `tenantId` field in every document.
+
+### How It Works
+
+#### 1. Tenant ID Column
+Every data model includes a `tenantId` field that references the tenant:
+
+```typescript
+// Example schema structure
+{
+  _id: ObjectId,
+  tenantId: ObjectId, // Required field linking to tenant
+  // ... other fields
+}
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+#### 2. Strict Query Filtering
+All database queries **must** include the `tenantId` filter to ensure data isolation:
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```typescript
+// ✅ Correct - Always filter by tenantId
+User.find({ tenantId: currentTenantId, isActive: true })
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+// ❌ Incorrect - Missing tenantId filter
+User.find({ isActive: true }) // This would expose data across tenants
+```
