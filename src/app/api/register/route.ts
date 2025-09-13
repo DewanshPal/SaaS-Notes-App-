@@ -24,19 +24,28 @@ export async function POST(request: NextRequest) {
                 error: "Invalid subscription plan. Must be FREE or PRO"
             }, { status: 400 });
         }
+        //create the slug from name by replacing spaces with hyphens and converting to lowercase
+        const slug = name.trim().toLowerCase().replace(/\s+/g, '-');
 
-        // Check if tenant with same name already exists
-        const existingTenant = await TenantModel.findOne({name});
+        // Validate slug
+        if (!slug) {
+            return NextResponse.json({
+                error: "Invalid tenant name for slug generation"
+            }, { status: 400 });
+        }
+        // Check if tenant with same name and slug already exists
+        const existingTenant = await TenantModel.findOne({ name, slug });
 
         if (existingTenant) {
             return NextResponse.json({
-                error: "Tenant with this name already exists choose a different name"
+                error: "Tenant with this name and slug already exists choose a different name"
             }, { status: 400 });
         }
 
         // Create new tenant
         const newTenant = new TenantModel({
             name: name,
+            slug: slug,
             subscription: subscription || SubscriptionPlan.FREE
         });
 
@@ -50,6 +59,7 @@ export async function POST(request: NextRequest) {
             tenant: {
                 id: savedTenant._id,
                 name: savedTenant.name,
+                slug: savedTenant.slug,
                 subscription: savedTenant.subscription,
                 createdAt: savedTenant.createdAt
             }

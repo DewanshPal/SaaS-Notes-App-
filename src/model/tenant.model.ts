@@ -8,6 +8,7 @@ export enum SubscriptionPlan {
 
 export interface Tenant extends Document{
     name: string;
+    slug: string;
     subscription: SubscriptionPlan;
     createdAt: Date;
     updatedAt: Date;
@@ -16,6 +17,11 @@ const TenantSchema = new mongoose.Schema<Tenant>({
     name: { 
         type: String, 
         required: true 
+    },
+    slug: {
+        type: String,
+        required: true,
+        unique: true,
     },
     subscription: { 
         type: String, 
