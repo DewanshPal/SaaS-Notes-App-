@@ -1,4 +1,4 @@
-import { Schema, model, Document } from "mongoose";
+import mongoose,{ Schema, model, Document } from "mongoose";
 import { Tenant } from "@/model/tenant.model";
 import { User } from "@/model/user.model";
 
@@ -35,4 +35,4 @@ const noteSchema = new Schema<Note>(
   { timestamps: true }
 );
 
-export default model<Note>("Note", noteSchema);
+export default mongoose.models.Note || model<Note>("Note", noteSchema);

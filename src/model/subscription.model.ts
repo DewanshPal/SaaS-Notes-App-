@@ -1,4 +1,4 @@
-import { Schema, model, Document } from "mongoose";
+import mongoose,{ Schema, model, Document} from "mongoose";
 import { Tenant, SubscriptionPlan } from "@/model/tenant.model";
 
 export interface Subscription extends Document {
@@ -31,4 +31,4 @@ const subscriptionSchema = new Schema<Subscription>(
   { timestamps: true }
 );
 
-export default model<Subscription>("Subscription", subscriptionSchema);
+export default mongoose.models.Subscription || model<Subscription>("Subscription", subscriptionSchema);
