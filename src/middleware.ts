@@ -3,14 +3,17 @@ import { NextResponse, NextRequest } from "next/server";
 // Middleware function
 export function middleware(request: NextRequest) {
   const path = request.nextUrl.pathname;
-
+  
   // Public routes
   const isPublicPath = path === "/sign-in" || path === "/sign-up" || path === "/" || path === "/register";
-
+  
   // Get token & role from cookies
   const token = request.cookies.get("token")?.value || "";
   const role = request.cookies.get("role")?.value || ""; // "admin" or "member"
-
+   if(path==="/")
+   {
+     return NextResponse.redirect(new URL("/sign-up", request.url));
+   }
   // If user is logged in and tries to access login/signup, redirect to home
   if (isPublicPath && token) {
     if(role == "ADMIN")
