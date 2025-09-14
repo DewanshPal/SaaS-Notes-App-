@@ -3,12 +3,17 @@
 import axios from "axios";
 import { toast } from "react-hot-toast";
 
+interface User {
+  username: string;
+  email: string;
+  role: string;
+  isAddingMembers: boolean;
+  isUpgradingPlan: boolean;
+}
+
 interface ToggleControlsProps {
-  user: {
-    isAddingMembers: boolean;
-    isUpgradingPlan: boolean;
-  };
-  onUserUpdate: (updatedUser: any) => void;
+  user: User;
+  onUserUpdate: (updatedUser: User) => void;
 }
 
 export default function ToggleControls({ user, onUserUpdate }: ToggleControlsProps) {

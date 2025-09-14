@@ -20,9 +20,9 @@ export default function UpgradeFlow({ slug }: { slug: string }) {
         setMessage(res.data.error || "Upgrade failed.");
         toast.error(res.data.error || "Upgrade failed.");
       }
-    } catch (err: any) {
-      setMessage(err.response?.data?.error || "Network error while upgrading.");
-      toast.error(err.response?.data?.error || "Network error while upgrading.");
+    } catch {
+      setMessage("Network error while upgrading.");
+      toast.error("Network error while upgrading.");
     } finally {
       setLoading(false);
     }

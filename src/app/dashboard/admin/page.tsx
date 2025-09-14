@@ -47,7 +47,7 @@ export default function AdminDashboard() {
       <ProfileInformation user={user} />
 
 
-      {user.role === "ADMIN" && <ToggleControls user={user} onUserUpdate={setUser} />}
+      {user?.role === "ADMIN" && <ToggleControls user={user} onUserUpdate={setUser} />}
 
       <div className="p-4 border rounded-lg shadow-md">
         <label className="block text-sm font-medium mb-2">

@@ -14,13 +14,11 @@ export async function GET(req: NextRequest) {
     }
 
     // Verify JWT
-    let decoded: any;
-    try {
-      decoded = jwt.verify(token, process.env.JWT_SECRET_KEY!);
-    } catch {
-      return NextResponse.json({ success: false, message: "Invalid token" }, { status: 401 });
-    }
-
+      const decoded = jwt.verify(token, process.env.JWT_SECRET_KEY!);
+      if(!decoded || typeof decoded === 'string')
+        {
+        return NextResponse.json({ success: false, message: "Invalid token" }, { status: 401 });
+      }
     // Extract user id
     const userId = decoded.id;
     if (!userId) {

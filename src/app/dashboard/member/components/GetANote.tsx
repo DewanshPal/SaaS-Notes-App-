@@ -25,7 +25,7 @@ export default function GetANote({ noteId }: { noteId: string }) {
       } else {
         setMessage("Failed to fetch note");
       }
-    } catch (error) {
+    } catch {
       setMessage("An error occurred while fetching the note");
     } finally {
       setLoading(false);
@@ -36,7 +36,7 @@ export default function GetANote({ noteId }: { noteId: string }) {
     if (noteId) {
       fetchNote();
     }
-  }, [noteId]);
+  });
 
   return (
     <div className="p-4 border rounded mt-4">

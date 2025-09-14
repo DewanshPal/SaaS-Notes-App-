@@ -7,7 +7,12 @@ import bcryptjs from "bcryptjs";
 
 await dbConnect();
 
-export async function POST(req: NextRequest, { params }: { params: { slug: string } }) {
+interface RouteParams {
+    params: Promise<{ slug: string }>;
+}
+
+export async function POST(req: NextRequest, { params }: RouteParams) {
+    const { slug } = await params;
 
     //checking user is admin
     const user = await requireAdmin(req);
@@ -16,7 +21,7 @@ export async function POST(req: NextRequest, { params }: { params: { slug: strin
         return user || Response.json({success: false,message: "Unauthorized" }, { status: 401 });
     }
     //extract tenant from slug
-    const tenant = await TenantModel.findOne({ slug: params.slug });
+    const tenant = await TenantModel.findOne({ slug: slug });
     if (!tenant) {
         return Response.json({ success: false, message: "Tenant not found" }, { status: 404 });
     }
@@ -38,12 +43,12 @@ export async function POST(req: NextRequest, { params }: { params: { slug: strin
         const {username, email, role } = await req.json();
 
         //check if user already exists within the same tenant
-        const user = await UserModel.findOne({
+        const existingUser = await UserModel.findOne({
             tenantId: tenant._id,
             email: email
         })
         
-        if(user){
+        if(existingUser){
             return Response.json({success: false, message: "User already exists in this tenant"}, {status: 400})
         }
 
@@ -63,10 +68,10 @@ export async function POST(req: NextRequest, { params }: { params: { slug: strin
         const savedMember = await newMember.save();
         console.log("New Member Added:", savedMember);
 
-        return Response.json({ success: true, message: `Tenant ${params.slug} upgraded!` });
+        return Response.json({ success: true, message: `Member added to tenant ${slug}!` });
     } catch(error)
     {
-        const errorMessage = error instanceof Error ? error.message : 'Signup failed';
+        const errorMessage = error instanceof Error ? error.message : 'internal server error';
         return Response.json({success: false, message: errorMessage}, {status: 500})
     }
 }

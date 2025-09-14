@@ -30,7 +30,7 @@ export default function UpdateNote({ noteId }: UpdateNoteProps) {
       } else {
         setMessage(response.data.message || "Failed to update note");
       }
-    } catch (error) {
+    } catch {
       setMessage("An error occurred while updating the note");
     } finally {
       setLoading(false);

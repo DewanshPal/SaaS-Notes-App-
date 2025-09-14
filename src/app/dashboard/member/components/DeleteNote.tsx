@@ -25,7 +25,7 @@ export default function DeleteNote({ noteId }: DeleteNoteProps) {
       } else {
         setMessage(response.data.message || "Failed to delete note");
       }
-    } catch (error) {
+    } catch {
       setMessage("An error occurred while deleting the note");
     } finally {
       setLoading(false);

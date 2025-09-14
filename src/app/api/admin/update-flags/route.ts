@@ -33,6 +33,7 @@ export async function PATCH(request: NextRequest){
 
     return NextResponse.json({ success: true, message: "Flag updated", user });
   } catch (error) {
+    console.error("Error updating flag:", error);
     return NextResponse.json({ success: false, message: "Failed to update flag" }, { status: 500 });
   }
 }

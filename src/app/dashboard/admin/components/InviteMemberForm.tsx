@@ -24,9 +24,9 @@ export default function InviteMemberForm({ slug }: { slug: string }) {
         setMessage("User invited successfully!");
         setForm({ username: "", email: "", role: "" });
       }
-    } catch (error: any) {
-      setMessage(error.response?.data?.error || "Failed to invite member");
-      toast.error(error.response?.data?.error || "Failed to invite member");
+    } catch {
+      setMessage("Failed to invite member");
+      toast.error("Failed to invite member");
     } finally {
       setLoading(false);
     }

@@ -28,8 +28,8 @@ export default function RegisterTenant() {
       } else {
         toast.error(response.data.error || "Registration failed");
       }
-    } catch (error: any) {
-      toast.error(error.response?.data?.error || "Something went wrong");
+    } catch {
+      toast.error("Something went wrong");
     } finally {
       setLoading(false);
     }

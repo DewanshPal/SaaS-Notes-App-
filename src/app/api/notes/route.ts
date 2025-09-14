@@ -42,6 +42,7 @@ export async function POST(req: NextRequest) {
 
         return NextResponse.json({ success: true, message: "Note created", note: savedNote }, { status: 201 });
     } catch (error) {
+        console.error("Error creating note:", error);
         return NextResponse.json({ success: false, message: "Error creating note" }, { status: 500 });
     }
 }
@@ -63,6 +64,7 @@ export async function GET(req: NextRequest) {
         const notes = await NoteModel.find({ tenantId: tenant._id });
         return NextResponse.json({ success: true, message:"Notes fetched successfully",notes }, { status: 200 });
     } catch (error) {
+        console.error("Error fetching notes:", error);
         return NextResponse.json({ success: false, message: "Error fetching notes" }, { status: 500 });
     }
 }

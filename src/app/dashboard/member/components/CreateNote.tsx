@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import axios from "axios";
 import { toast } from "react-hot-toast";
 
@@ -11,7 +11,7 @@ export default function CreateNote() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const res = await axios.post("/api/notes", { title, content });
+      await axios.post("/api/notes", { title, content });
       setMessage("Note created successfully!");
       toast.success("Note created successfully!");
     } catch (err) {

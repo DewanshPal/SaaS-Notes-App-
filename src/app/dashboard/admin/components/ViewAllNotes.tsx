@@ -26,7 +26,7 @@ export default function ViewAllNotes() {
             } else {
                 toast.error("Failed to fetch notes");
             }
-        } catch (error) {
+        } catch  {
             toast.error("An error occurred while fetching notes");
         } finally {
             setLoading(false);

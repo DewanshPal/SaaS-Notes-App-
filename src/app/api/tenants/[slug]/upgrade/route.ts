@@ -3,10 +3,14 @@ import TenantModel from "@/model/tenant.model";
 import { NextRequest } from "next/server";
 import dbConnect from "@/lib/dbConnection";
 
-
 await dbConnect();
 
-export async function POST(req: NextRequest, { params }: { params: { slug: string } }) {
+interface RouteParams {
+    params: Promise<{ slug: string }>;
+}
+
+export async function POST(req: NextRequest, { params }: RouteParams) {
+    const { slug } = await params;
 
     //checking user is admin
     const user = await requireAdmin(req);
@@ -16,7 +20,7 @@ export async function POST(req: NextRequest, { params }: { params: { slug: strin
     }
 
     //extract tenant from slug
-    const tenant = await TenantModel.findOne({ slug: params.slug });
+    const tenant = await TenantModel.findOne({ slug: slug });
     if (!tenant) {
         return Response.json({ success: false, message: "Tenant not found" }, { status: 404 });
     }
@@ -34,11 +38,12 @@ export async function POST(req: NextRequest, { params }: { params: { slug: strin
     try{
         //Upgrading the tenant plan
         tenant.subscription = "PRO";
-        tenant.noteLimit = null; //unlimited access
+        tenant.noteLimit = null; // Unlimited notes
         await tenant.save();
     } catch (error) {
+        console.error("Error upgrading tenant:", error);
         return Response.json({ success: false, message: "Failed to upgrade tenant" }, { status: 500 });
     }
 
-  return Response.json({ success: true, message: `Tenant ${params.slug} upgraded!` });
+  return Response.json({ success: true, message: `Tenant ${slug} upgraded!` });
 }
