@@ -1,7 +1,6 @@
-//update the note with given id
+"use client";
 import { useState } from "react";
 import axios from "axios";
-import { toast } from "react-hot-toast";
 
 interface UpdateNoteProps {
   noteId: string;
@@ -11,14 +10,15 @@ export default function UpdateNote({ noteId }: UpdateNoteProps) {
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
   const [loading, setLoading] = useState(false);
+  const [message, setMessage] = useState("");
 
   const handleUpdate = async () => {
     if (!noteId) {
-      toast.error("Please enter a valid note ID");
+      setMessage("Please enter a valid note ID");
       return;
     }
     if (!title || !content) {
-      toast.error("Please enter both title and content");
+      setMessage("Please enter both title and content");
       return;
     }
 
@@ -26,12 +26,12 @@ export default function UpdateNote({ noteId }: UpdateNoteProps) {
     try {
       const response = await axios.put(`/api/notes/${noteId}`, { title, content });
       if (response.data.success) {
-        toast.success("Note updated successfully");
+        setMessage("Note updated successfully");
       } else {
-        toast.error(response.data.message || "Failed to update note");
+        setMessage(response.data.message || "Failed to update note");
       }
     } catch (error) {
-      toast.error("An error occurred while updating the note");
+      setMessage("An error occurred while updating the note");
     } finally {
       setLoading(false);
     }
@@ -59,6 +59,7 @@ export default function UpdateNote({ noteId }: UpdateNoteProps) {
       >
         {loading ? "Updating..." : "Update Note"}
       </button>
+      {message && <p className="mt-2 text-sm">{message}</p>}
     </div>
   );
 }

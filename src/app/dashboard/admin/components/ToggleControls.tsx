@@ -14,7 +14,7 @@ interface ToggleControlsProps {
 export default function ToggleControls({ user, onUserUpdate }: ToggleControlsProps) {
   async function toggleFlag(flag: string, value: boolean) {
     try {
-      const res = await axios.patch("/api/users/update-flags", { flag, value });
+      const res = await axios.patch("/api/admin/update-flags", { flag, value });
       onUserUpdate(res.data.user); // update parent state immediately
       toast.success(`Successfully updated ${flag} to ${value}`);
     } catch (err) {

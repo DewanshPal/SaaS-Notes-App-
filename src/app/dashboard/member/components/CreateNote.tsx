@@ -1,4 +1,4 @@
-//create the dashboard member page
+"use client";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { toast } from "react-hot-toast";
@@ -6,14 +6,17 @@ import { toast } from "react-hot-toast";
 export default function CreateNote() {
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
+  const [message, setMessage] = useState("");
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
       const res = await axios.post("/api/notes", { title, content });
+      setMessage("Note created successfully!");
       toast.success("Note created successfully!");
     } catch (err) {
       console.error("Failed to create note", err);
+      setMessage("Failed to create note");
       toast.error("Failed to create note");
     }
   };
@@ -42,6 +45,7 @@ export default function CreateNote() {
       <button type="submit" className="bg-blue-500 text-white px-4 py-2 rounded">
         Create Note
       </button>
+      {message && <p className="mt-2 text-sm">{message}</p>}
     </form>
   );
 }

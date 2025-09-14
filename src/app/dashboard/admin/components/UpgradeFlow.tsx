@@ -5,7 +5,8 @@ import { toast } from "react-hot-toast";
 
 export default function UpgradeFlow({ slug }: { slug: string }) {
   const [loading, setLoading] = useState(false);
-  
+  const [message, setMessage] = useState("");
+
   async function handleUpgrade() {
     setLoading(true);
 
@@ -13,11 +14,14 @@ export default function UpgradeFlow({ slug }: { slug: string }) {
       const res = await axios.post(`/api/tenants/${slug}/upgrade`);
 
       if (res.data.success) {
-        toast.success(`Tenant "${slug}" upgraded successfully!`);
+        setMessage("Tenant upgraded successfully!");
+        toast.success("Tenant upgraded successfully!");
       } else {
+        setMessage(res.data.error || "Upgrade failed.");
         toast.error(res.data.error || "Upgrade failed.");
       }
     } catch (err: any) {
+      setMessage(err.response?.data?.error || "Network error while upgrading.");
       toast.error(err.response?.data?.error || "Network error while upgrading.");
     } finally {
       setLoading(false);
@@ -35,6 +39,7 @@ export default function UpgradeFlow({ slug }: { slug: string }) {
       >
         {loading ? "Upgrading..." : `Upgrade Tenant: ${slug}`}
       </button>
+      {message && <p className="mt-2 text-sm">{message}</p>}
     </div>
   );
 }

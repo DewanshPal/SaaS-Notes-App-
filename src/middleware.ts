@@ -22,7 +22,7 @@ export function middleware(request: NextRequest) {
 
   // If not logged in and trying to access protected routes, redirect to login
   if (!isPublicPath && !token) {
-    return NextResponse.redirect(new URL("/sign-in", request.url));
+    return NextResponse.redirect(new URL("/sign-up", request.url));
   }
 
   // Role-based protection

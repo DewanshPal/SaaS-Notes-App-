@@ -10,7 +10,7 @@ import ViewAllNotes from "./components/ViewAllNotes";
 import Logout from "@/helper/Logout";
 
 interface User { 
-  name: string;
+  username: string;
   email: string;
   role: string;
   isAddingMembers: boolean;
@@ -69,7 +69,7 @@ export default function AdminDashboard() {
       </div>
       {user.isUpgradingPlan && slug && <UpgradeFlow slug={slug} />}
       {user.isAddingMembers && slug && <InviteMemberForm slug={slug} />}
-      {viewAllNotes && slug && <ViewAllNotes />}
+      {viewAllNotes && <ViewAllNotes />}
       <Logout/>
     </div>
   );

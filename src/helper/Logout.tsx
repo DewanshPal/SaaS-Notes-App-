@@ -9,7 +9,7 @@ export default function Logout() {
 
   const handleLogout = async () => {
     try {
-      const res = await axios.post("/api/auth/logout");
+      const res = await axios.get("/api/auth/logout");
 
       if (res.data?.success) {
         toast.success(res.data.message || "Logged out successfully!");

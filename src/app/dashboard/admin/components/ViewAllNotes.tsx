@@ -35,7 +35,7 @@ export default function ViewAllNotes() {
 
     useEffect(() => {
         fetchNotes();
-    }, [notes]);
+    }, []);
 
     return (
         <div className="p-4 border rounded">

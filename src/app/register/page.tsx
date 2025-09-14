@@ -39,7 +39,7 @@ export default function RegisterTenant() {
     <div className="flex justify-center items-center min-h-screen bg-gray-50">
       <form
         onSubmit={handleRegister}
-        className="bg-white shadow-lg rounded-xl p-6 w-full max-w-md space-y-4"
+        className="bg-black shadow-lg rounded-xl p-6 w-full max-w-md space-y-4"
       >
         <h1 className="text-2xl font-bold text-center">Register Tenant</h1>
 

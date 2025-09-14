@@ -1,4 +1,4 @@
-//create the dashboard member page // instead of slug take note_id from the user_id
+"use client";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { toast } from "react-hot-toast";
@@ -10,7 +10,7 @@ import Logout from "@/helper/Logout";
 import GetANote from "./components/GetANote";
 
 interface User { 
-  name: string;
+  username: string;
   email: string;
   role: string;
   isAddingMembers: boolean;
@@ -50,7 +50,7 @@ export default function MemberDashboard() {
         onChange={(e) => setNoteId(e.target.value)}
       />
       <ProfileInformation user={user} />
-      {noteId && <CreateNote/>}
+      <CreateNote />
       {noteId && <UpdateNote noteId={noteId} />}
       {noteId && <DeleteNote noteId={noteId} />}
       {noteId && <GetANote noteId={noteId} />}

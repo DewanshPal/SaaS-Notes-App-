@@ -1,7 +1,6 @@
-//get a specific note by id
+"use client";
 import { useEffect, useState } from "react";
 import axios from "axios";
-import { toast } from "react-hot-toast";
 
 interface Note {
   _id: string;
@@ -14,6 +13,7 @@ interface Note {
 export default function GetANote({ noteId }: { noteId: string }) {
   const [note, setNote] = useState<Note | null>(null);
   const [loading, setLoading] = useState(false);
+  const [message, setMessage] = useState("");
 
   const fetchNote = async () => {
     setLoading(true);
@@ -21,12 +21,12 @@ export default function GetANote({ noteId }: { noteId: string }) {
       const response = await axios.get(`/api/notes/${noteId}`);
       if (response.data.success) {
         setNote(response.data.note);
-        toast.success("Note fetched successfully!");
+        setMessage("Note fetched successfully!");
       } else {
-        toast.error("Failed to fetch note");
+        setMessage("Failed to fetch note");
       }
     } catch (error) {
-      toast.error("An error occurred while fetching the note");
+      setMessage("An error occurred while fetching the note");
     } finally {
       setLoading(false);
     }
@@ -53,6 +53,7 @@ export default function GetANote({ noteId }: { noteId: string }) {
           <p className="text-sm text-gray-500">
             Updated At: {new Date(note.updatedAt).toLocaleString()}
           </p>
+          {message && <p className="mt-2 text-sm">{message}</p>}
         </div>
       ) : (
         <p>No note found</p>

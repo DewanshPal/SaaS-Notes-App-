@@ -1,7 +1,7 @@
-//delete the note with the given id
+"use client";
 import { useState } from "react";
 import axios from "axios";
-import { toast } from "react-hot-toast";
+
 
 interface DeleteNoteProps {
   noteId: string;
@@ -9,10 +9,11 @@ interface DeleteNoteProps {
 
 export default function DeleteNote({ noteId }: DeleteNoteProps) {
   const [loading, setLoading] = useState(false);
+  const [message, setMessage] = useState("");
 
   const handleDelete = async () => {
     if (!noteId) {
-      toast.error("Please enter a valid note ID");
+      setMessage("Please enter a valid note ID");
       return;
     }
 
@@ -20,12 +21,12 @@ export default function DeleteNote({ noteId }: DeleteNoteProps) {
     try {
       const response = await axios.delete(`/api/notes/${noteId}`);
       if (response.data.success) {
-        toast.success("Note deleted successfully");
+        setMessage("Note deleted successfully");
       } else {
-        toast.error(response.data.message || "Failed to delete note");
+        setMessage(response.data.message || "Failed to delete note");
       }
     } catch (error) {
-      toast.error("An error occurred while deleting the note");
+      setMessage("An error occurred while deleting the note");
     } finally {
       setLoading(false);
     }
@@ -40,6 +41,7 @@ export default function DeleteNote({ noteId }: DeleteNoteProps) {
       >
         {loading ? "Deleting..." : "Delete Note"}
       </button>
+      {message && <p className="mt-2 text-sm">{message}</p>}
     </div>
   );
 }

@@ -1,6 +1,7 @@
 "use client";
 import { useState } from "react";
 import axios from "axios";
+import { toast } from "react-hot-toast";
 
 export default function InviteMemberForm({ slug }: { slug: string }) {
   const [form, setForm] = useState({ username: "", email: "", role: "" });
@@ -19,11 +20,13 @@ export default function InviteMemberForm({ slug }: { slug: string }) {
     try {
       const res = await axios.post(`/api/tenants/${slug}/invite-members`, form);
       if (res.data.success) {
+        toast.success("User invited successfully!");
         setMessage("User invited successfully!");
         setForm({ username: "", email: "", role: "" });
       }
     } catch (error: any) {
       setMessage(error.response?.data?.error || "Failed to invite member");
+      toast.error(error.response?.data?.error || "Failed to invite member");
     } finally {
       setLoading(false);
     }
@@ -59,9 +62,8 @@ export default function InviteMemberForm({ slug }: { slug: string }) {
           required
         >
           <option value="">Select Role</option>
-          <option value="admin">Admin</option>
-          <option value="member">Member</option>
-          <option value="viewer">Viewer</option>
+          <option value="ADMIN">Admin</option>
+          <option value="MEMBER">Member</option>
         </select>
         <button
           type="submit"
