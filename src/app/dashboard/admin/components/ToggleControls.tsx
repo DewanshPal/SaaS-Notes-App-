@@ -1,6 +1,7 @@
 "use client";
 
 import axios from "axios";
+import { toast } from "react-hot-toast";
 
 interface ToggleControlsProps {
   user: {
@@ -15,8 +16,10 @@ export default function ToggleControls({ user, onUserUpdate }: ToggleControlsPro
     try {
       const res = await axios.patch("/api/users/update-flags", { flag, value });
       onUserUpdate(res.data.user); // update parent state immediately
+      toast.success(`Successfully updated ${flag} to ${value}`);
     } catch (err) {
       console.error("Failed to update flag", err);
+      toast.error("Failed to update flag");
     }
   }
 

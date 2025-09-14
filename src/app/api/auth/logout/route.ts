@@ -10,6 +10,10 @@ export async function GET(){
             httpOnly: true,
             expires: new Date(0),
         })
+        response.cookies.set("role", "", {
+            httpOnly: true,
+            expires: new Date(0),
+        })
         return response;
     } catch (error: unknown) {
         const errorMessage = error instanceof Error ? error.message : 'Logout failed';
