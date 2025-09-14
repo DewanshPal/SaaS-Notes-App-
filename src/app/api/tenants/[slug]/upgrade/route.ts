@@ -1,6 +1,11 @@
 import { requireAdmin } from "@/lib/auth";
 import TenantModel from "@/model/tenant.model";
 import { NextRequest } from "next/server";
+import dbConnect from "@/lib/dbConnection";
+
+
+await dbConnect();
+
 export async function POST(req: NextRequest, { params }: { params: { slug: string } }) {
 
     //checking user is admin
@@ -20,16 +25,20 @@ export async function POST(req: NextRequest, { params }: { params: { slug: strin
     if (user.tenantId.toString() !== tenant._id.toString()) {
         return Response.json({ success: false, message: "Not part of this tenant" }, { status: 403 });
     }
+
     //check admin toggle is true
     if(!user.isUpgradingPlan)
     {
         return Response.json({ success: false, message: "Toggle is off to upgrade plan" }, { status: 403 });
     }
-
-    //upgrade plan
-    tenant.subscriptionPlan = "PRO";
-    tenant.noteLimit = null; //unlimited access
-    await tenant.save();
+    try{
+        //Upgrading the tenant plan
+        tenant.subscription = "PRO";
+        tenant.noteLimit = null; //unlimited access
+        await tenant.save();
+    } catch (error) {
+        return Response.json({ success: false, message: "Failed to upgrade tenant" }, { status: 500 });
+    }
 
   return Response.json({ success: true, message: `Tenant ${params.slug} upgraded!` });
 }

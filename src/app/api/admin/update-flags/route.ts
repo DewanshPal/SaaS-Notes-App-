@@ -1,25 +1,19 @@
 import { NextResponse , NextRequest } from "next/server";
 import dbConnect from "@/lib/dbConnection";
 import UserModel from "@/model/user.model";
-import jwt from "jsonwebtoken";
+import { requireAdmin } from "@/lib/auth";
+
+await dbConnect();
+
 
 export async function PATCH(request: NextRequest){
-  await dbConnect();
+  // Extract userId from query parameters
+  const adminUser = await requireAdmin(request);
+    if (!adminUser || 'status' in adminUser) {
+      return adminUser || NextResponse.json({ success: false, message: "Unauthorized" }, { status: 401 });
+    }
 
   try {
-    // token in cookies
-    const token = request.cookies.get("token")?.value;
-    if (!token) {
-      return NextResponse.json({ success: false, message: "Unauthorized" }, { status: 401 });
-    }
-    
-    // verify token and get userId
-    const decoded = jwt.verify(token, process.env.JWT_SECRET_KEY || "") as { id: string };
-    const userId = decoded?.id;
-
-    if (!userId) {
-      return NextResponse.json({ success: false, message: "Unauthorized" }, { status: 401 });
-    }
 
     const { flag, value } = await request.json();
 
@@ -28,7 +22,7 @@ export async function PATCH(request: NextRequest){
     }
 
     const user = await UserModel.findByIdAndUpdate(
-      userId,
+      adminUser.id,
       { [flag]: value },
       { new: true }
     );

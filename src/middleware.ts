@@ -5,7 +5,7 @@ export function middleware(request: NextRequest) {
   const path = request.nextUrl.pathname;
 
   // Public routes
-  const isPublicPath = path === "/sign-in" || path === "/sign-up";
+  const isPublicPath = path === "/sign-in" || path === "/sign-up" || path === "/" || path === "/register";
 
   // Get token & role from cookies
   const token = request.cookies.get("token")?.value || "";
@@ -13,16 +13,16 @@ export function middleware(request: NextRequest) {
 
   // If user is logged in and tries to access login/signup, redirect to home
   if (isPublicPath && token) {
-    return NextResponse.redirect(new URL("/dashboard", request.url));
-  }
-
-  // If not logged in and trying to access protected routes, redirect to login
-  if (!isPublicPath && !token) {
     if(role == "ADMIN")
     {
         return NextResponse.redirect(new URL("/dashboard/admin", request.url));
     }
     return NextResponse.redirect(new URL("/dashboard/member", request.url));
+  }
+
+  // If not logged in and trying to access protected routes, redirect to login
+  if (!isPublicPath && !token) {
+    return NextResponse.redirect(new URL("/sign-in", request.url));
   }
 
   // Role-based protection
@@ -45,6 +45,7 @@ export const config = {
     "/",
     "/sign-in",
     "/sign-up",
+    "/register",
     "/dashboard/:path*", // Protect dashboard routes
   ],
 };
