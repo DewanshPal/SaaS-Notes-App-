@@ -1,0 +1,62 @@
+//get a specific note by id
+import { useEffect, useState } from "react";
+import axios from "axios";
+import { toast } from "react-hot-toast";
+
+interface Note {
+  _id: string;
+  title: string;
+  content: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export default function GetANote({ noteId }: { noteId: string }) {
+  const [note, setNote] = useState<Note | null>(null);
+  const [loading, setLoading] = useState(false);
+
+  const fetchNote = async () => {
+    setLoading(true);
+    try {
+      const response = await axios.get(`/api/notes/${noteId}`);
+      if (response.data.success) {
+        setNote(response.data.note);
+        toast.success("Note fetched successfully!");
+      } else {
+        toast.error("Failed to fetch note");
+      }
+    } catch (error) {
+      toast.error("An error occurred while fetching the note");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    if (noteId) {
+      fetchNote();
+    }
+  }, [noteId]);
+
+  return (
+    <div className="p-4 border rounded mt-4">
+      <h2 className="text-xl font-semibold mb-4">Get A Note</h2>
+      {loading ? (
+        <p>Loading note...</p>
+      ) : note ? (
+        <div>
+          <h3 className="text-lg font-bold">{note.title}</h3>
+          <p className="mt-2">{note.content}</p>
+          <p className="text-sm text-gray-500 mt-1">
+            Created At: {new Date(note.createdAt).toLocaleString()}
+          </p>
+          <p className="text-sm text-gray-500">
+            Updated At: {new Date(note.updatedAt).toLocaleString()}
+          </p>
+        </div>
+      ) : (
+        <p>No note found</p>
+      )}
+    </div>
+  );
+}

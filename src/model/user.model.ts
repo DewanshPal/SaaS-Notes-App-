@@ -52,10 +52,6 @@ const UserSchema = new mongoose.Schema<User>({
     },
 }, { timestamps: true });
 
-// Compound unique index: allows same email across different tenants
-UserSchema.index({ tenantId: 1, email: 1 }, { unique: true });
-
-
 const UserModel : Model<User> = mongoose.models.User || mongoose.model<User>('User', UserSchema);
 
 export default UserModel;

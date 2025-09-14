@@ -1,32 +1,68 @@
-// import { Note } from "@/models/note";
-// import { Company } from "@/models/company";
+import dbConnect from "@/lib/dbConnection";
+import NoteModel from "@/model/notes.model";
+import TenantModel from "@/model/tenant.model";
+import { requireMember } from "@/lib/auth";
+import { requireAdmin } from "@/lib/auth";
+import { NextRequest, NextResponse } from "next/server";
 
-// export async function POST(req: Request) {
-//   const user = await requireRole(req, ["admin", "user"]);
-//   if (!user) return;
+await dbConnect();
 
-//   // Find tenant
-//   const tenant = await Company.findById(user.companyId);
-//   if (!tenant) {
-//     return Response.json({ error: "Tenant not found" }, { status: 404 });
-//   }
+export async function POST(req: NextRequest) {
+    const user = await requireMember(req);
+    if (!user || 'status' in user)
+    {
+        return user || NextResponse.json({success: false,message: "Unauthorized" }, { status: 401 });
+    }
 
-//   // Check note limit
-//   if (tenant.noteLimit !== null) {
-//     const count = await Note.countDocuments({ companyId: tenant._id });
-//     if (count >= tenant.noteLimit) {
-//       return Response.json({ error: "Note limit reached" }, { status: 403 });
-//     }
-//   }
+  // Find tenant
+  const tenant = await TenantModel.findById(user.tenantId);
+  if (!tenant) {
+    return NextResponse.json({ success: false, message: "Tenant not found" }, { status: 404 });
+  }
 
-//   // Create note
-//   const { title, content } = await req.json();
-//   const note = await Note.create({
-//     title,
-//     content,
-//     userId: user._id,
-//     companyId: tenant._id,
-//   });
+  // Check note limit
+  if (tenant.noteLimit !== null) {
+    const count = await NoteModel.countDocuments({ tenantId: tenant._id });
+    if (count >= tenant.noteLimit) {
+      return NextResponse.json({ success: false, message: "Note limit reached" }, { status: 403 });
+    }
+  }
 
-//   return Response.json(note, { status: 201 });
-// }
+    try {
+        const { title, content } = await req.json();
+
+        const newNote = new NoteModel({
+            tenantId: tenant._id,
+            userId: user._id,
+            title,
+            content
+        });
+
+        const savedNote = await newNote.save();
+
+        return NextResponse.json({ success: true, message: "Note created", note: savedNote }, { status: 201 });
+    } catch (error) {
+        return NextResponse.json({ success: false, message: "Error creating note" }, { status: 500 });
+    }
+}
+
+//List all notes for the current tenant
+export async function GET(req: NextRequest) {
+    const user = await requireAdmin(req);
+    if (!user || 'status' in user) {
+        return user || NextResponse.json({ success: false, message: "Unauthorized" }, { status: 401 });
+    }
+
+    // Find tenant
+    const tenant = await TenantModel.findById(user.tenantId);
+    if (!tenant) {
+        return NextResponse.json({ success: false, message: "Tenant not found" }, { status: 404 });
+    }
+
+    try { 
+        const notes = await NoteModel.find({ tenantId: tenant._id });
+        return NextResponse.json({ success: true, message:"Notes fetched successfully",notes }, { status: 200 });
+    } catch (error) {
+        return NextResponse.json({ success: false, message: "Error fetching notes" }, { status: 500 });
+    }
+}

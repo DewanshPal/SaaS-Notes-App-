@@ -37,3 +37,14 @@ export async function requireAdmin(req: NextRequest) {
 
   return user;
 }
+
+//Require Member role
+export async function requireMember(req: NextRequest) {
+  const user = await authUser(req);
+
+  if (!user || user.role !== "MEMBER") {
+    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+  }
+
+  return user;
+}

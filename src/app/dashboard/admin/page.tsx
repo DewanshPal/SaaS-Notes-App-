@@ -1,5 +1,4 @@
 "use client";
-
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { toast } from "react-hot-toast";
@@ -7,6 +6,7 @@ import ToggleControls from "./components/ToggleControls";
 import UpgradeFlow from "./components/UpgradeFlow";
 import ProfileInformation from "@/helper/ProfileInformation";
 import InviteMemberForm from "./components/InviteMemberForm";
+import ViewAllNotes from "./components/ViewAllNotes";
 import Logout from "@/helper/Logout";
 
 interface User { 
@@ -20,6 +20,7 @@ interface User {
 export default function AdminDashboard() {
   const [user, setUser] = useState<User | null>(null);
   const [slug, setSlug] = useState(""); // slug from input
+  const [viewAllNotes, setViewAllNotes] = useState(false);
 
   // Initial fetch of profile info
   useEffect(() => {
@@ -60,13 +61,16 @@ export default function AdminDashboard() {
           placeholder="Enter your tenant slug (e.g. openai-inc)"
           className="w-full border px-3 py-2 rounded"
         />
+        <button
+          onClick={() => setViewAllNotes(true)}
+          className="mt-2 bg-blue-500 text-white px-4 py-2 rounded"
+        >
+          View All Notes
+        </button>
       </div>
-
-      
       {user.isUpgradingPlan && slug && <UpgradeFlow slug={slug} />}
-      
       {user.isAddingMembers && slug && <InviteMemberForm slug={slug} />}
-
+      {viewAllNotes && slug && <ViewAllNotes />}
       <Logout/>
     </div>
   );
