@@ -18,7 +18,7 @@ export default function LoginPage() {
     const onLogin = async () => {
         try {
             setLoading(true);
-            const response = await axios.post("/api/auth/login", user);
+            const response = await axios.post("/api/auth/sign-in", user);
             console.log("Login success", response.data);
             toast.success("Login success");
             if(response.data.user.role == "ADMIN")
